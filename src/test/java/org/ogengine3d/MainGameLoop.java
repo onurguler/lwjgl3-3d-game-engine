@@ -4,6 +4,7 @@ import org.ogengine3d.rengerEngine.DisplayManager;
 import org.ogengine3d.rengerEngine.Loader;
 import org.ogengine3d.rengerEngine.RawModel;
 import org.ogengine3d.rengerEngine.Renderer;
+import org.ogengine3d.shaders.StaticShader;
 
 public class MainGameLoop {
     public static void main(String[] args) {
@@ -12,6 +13,7 @@ public class MainGameLoop {
 
         Loader loader = new Loader();
         Renderer renderer = new Renderer();
+        StaticShader shader = new StaticShader();
 
         float[] vertices = { // Quad vertices
                 -0.5f, 0.5f, 0, // V0
@@ -29,10 +31,13 @@ public class MainGameLoop {
 
         while (!displayManager.isCloseRequested()) {
             renderer.prepare();
+            shader.start();
             renderer.render(model);
+            shader.stop();
             displayManager.updateDisplay();
         }
 
+        shader.cleanUp();
         loader.cleanUp();
         displayManager.closeDisplay();
     }
