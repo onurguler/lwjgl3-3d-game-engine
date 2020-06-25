@@ -19,4 +19,9 @@ public class TexturedStaticShader extends ShaderProgram {
         super.bindAttribute(1, "textureCoords");
     }
 
+    @Override
+    protected void getAllUniformLocations() {
+
+    }
+
 }
