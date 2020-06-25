@@ -3,6 +3,7 @@ package org.ogengine3d.rengerEngine;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL32.*;
 import org.lwjgl.opengl.GL;
+import org.ogengine3d.io.InputManager;
 
 public class DisplayManager {
     private long window;
@@ -10,6 +11,8 @@ public class DisplayManager {
     private int width;
     private int height;
     private String title;
+
+    InputManager inputManager;
 
     public DisplayManager(int width, int height, String title) {
         this.width = width;
@@ -37,6 +40,8 @@ public class DisplayManager {
         GL.createCapabilities();
 
         glfwShowWindow(window);
+
+        inputManager = new InputManager(window);
     }
 
     public void updateDisplay() {
@@ -51,5 +56,17 @@ public class DisplayManager {
 
     public boolean isCloseRequested() {
         return glfwWindowShouldClose(window);
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public InputManager getInputManager() {
+        return inputManager;
     }
 }
