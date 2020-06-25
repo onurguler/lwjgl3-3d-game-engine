@@ -1,4 +1,4 @@
-package org.ogengine3d.rengerEngine;
+package org.ogengine3d.models;
 
 public class RawModel {
     private int vaoID;
