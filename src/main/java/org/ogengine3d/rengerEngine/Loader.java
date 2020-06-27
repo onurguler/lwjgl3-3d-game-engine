@@ -36,6 +36,16 @@ public class Loader {
         return new RawModel(vaoID, indices.length);
     }
 
+    public RawModel loadToVAO(float[] positions, float[] textureCoords, float[] normals, int[] indices) {
+        int vaoID = createVAO();
+        bindIndicesBuffer(indices);
+        storeDataInAttributeList(0, 3, positions);
+        storeDataInAttributeList(1, 2, textureCoords);
+        storeDataInAttributeList(2, 3, normals);
+        unBindVAO();
+        return new RawModel(vaoID, indices.length);
+    }
+
     public int loadTexture(String filePath) {
         IntBuffer width = BufferUtils.createIntBuffer(1);
         IntBuffer height = BufferUtils.createIntBuffer(1);
@@ -49,8 +59,8 @@ public class Loader {
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureID);
         GL11.glTexParameterf(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
         GL11.glTexParameterf(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
-        GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, width.get(), height.get(), 0,
-                GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, data);
+        GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, width.get(), height.get(), 0, GL11.GL_RGBA,
+                GL11.GL_UNSIGNED_BYTE, data);
         GL11.glBindTexture(GL13.GL_TEXTURE_2D, 0);
         STBImage.stbi_image_free(data);
 

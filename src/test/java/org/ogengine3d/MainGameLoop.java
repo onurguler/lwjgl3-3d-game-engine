@@ -1,12 +1,16 @@
 package org.ogengine3d;
 
+import java.util.Vector;
+
 import org.joml.Vector3f;
 import org.ogengine3d.entities.Camera;
 import org.ogengine3d.entities.Entity;
+import org.ogengine3d.entities.Light;
 import org.ogengine3d.models.RawModel;
 import org.ogengine3d.models.TexturedModel;
 import org.ogengine3d.rengerEngine.DisplayManager;
 import org.ogengine3d.rengerEngine.Loader;
+import org.ogengine3d.rengerEngine.OBJLoader;
 import org.ogengine3d.rengerEngine.Renderer;
 import org.ogengine3d.shaders.StaticShader;
 import org.ogengine3d.textures.ModelTexture;
@@ -21,69 +25,25 @@ public class MainGameLoop {
                 StaticShader shader = new StaticShader();
                 Renderer renderer = new Renderer(displayManager, shader);
 
-                // float[] vertices = { // Quad vertices
-                // -0.5f, 0.5f, 0, // V0
-                // -0.5f, -0.5f, 0, // V1
-                // 0.5f, -0.5f, 0, // V2
-                // 0.5f, 0.5f, 0 // V3
-                // };
-
-                // int[] indices = { // Quad indices
-                // 0, 1, 3, // Top left triangle (V0, V1, V3)
-                // 3, 1, 2 // Bottom right triangle (V3, V1, V2)
-                // };
-
-                // float[] textureCoords = { // Quad texture coords
-                // 0, 0, // V0
-                // 0, 1, // V1
-                // 1, 1, // V2
-                // 1, 0 // V3
-                // };
-
-                float[] vertices = {-0.5f, 0.5f, 0, -0.5f, -0.5f, 0, 0.5f, -0.5f, 0, 0.5f, 0.5f, 0,
-
-                                -0.5f, 0.5f, 1, -0.5f, -0.5f, 1, 0.5f, -0.5f, 1, 0.5f, 0.5f, 1,
-
-                                0.5f, 0.5f, 0, 0.5f, -0.5f, 0, 0.5f, -0.5f, 1, 0.5f, 0.5f, 1,
-
-                                -0.5f, 0.5f, 0, -0.5f, -0.5f, 0, -0.5f, -0.5f, 1, -0.5f, 0.5f, 1,
-
-                                -0.5f, 0.5f, 1, -0.5f, 0.5f, 0, 0.5f, 0.5f, 0, 0.5f, 0.5f, 1,
-
-                                -0.5f, -0.5f, 1, -0.5f, -0.5f, 0, 0.5f, -0.5f, 0, 0.5f, -0.5f, 1
-
-                };
-
-                float[] textureCoords = {
-
-                                0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1,
-                                0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1,
-                                1, 0
-
-
-                };
-
-                int[] indices = {0, 1, 3, 3, 1, 2, 4, 5, 7, 7, 5, 6, 8, 9, 11, 11, 9, 10, 12, 13,
-                                15, 15, 13, 14, 16, 17, 19, 19, 17, 18, 20, 21, 23, 23, 21, 22
-
-                };
-
-                // RawModel model = loader.loadToVAO(vertices, indices);
-                RawModel model = loader.loadToVAO(vertices, textureCoords, indices);
-                ModelTexture texture = new ModelTexture(loader.loadTexture(
-                                FileUtils.getFilePathFromResources("images/image.png")));
+                RawModel model = OBJLoader.loadObjModel(FileUtils.getFilePathFromResources("assets/models/dragon.obj"),
+                                loader);
+                ModelTexture texture = new ModelTexture(
+                                loader.loadTexture(FileUtils.getFilePathFromResources("assets/textures/white.png")));
                 TexturedModel texturedModel = new TexturedModel(model, texture);
 
-                Entity entity = new Entity(texturedModel, new Vector3f(0, 0, -1),
-                                new Vector3f(0, 0, 0), new Vector3f(1, 1, 1));
+                Entity entity = new Entity(texturedModel, new Vector3f(0, 0, -25), new Vector3f(0, 0, 0),
+                                new Vector3f(1, 1, 1));
 
                 Camera camera = new Camera(displayManager.getInputManager());
 
+                Light light = new Light(new Vector3f(0, 0, -20), new Vector3f(1, 1, 1));
+
                 while (!displayManager.isCloseRequested()) {
-                        entity.addRotation(new Vector3f(1, 1, 0));
+                        entity.addRotation(new Vector3f(0, 1, 0));
                         camera.move();
                         renderer.prepare();
                         shader.start();
+                        shader.loadLight(light);
                         shader.loadViewMatrix(camera);
                         renderer.render(entity, shader);
                         shader.stop();
