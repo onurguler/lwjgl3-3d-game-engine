@@ -1,7 +1,5 @@
 package org.ogengine3d;
 
-import java.util.Vector;
-
 import org.joml.Vector3f;
 import org.ogengine3d.entities.Camera;
 import org.ogengine3d.entities.Entity;
@@ -29,6 +27,8 @@ public class MainGameLoop {
                                 loader);
                 ModelTexture texture = new ModelTexture(
                                 loader.loadTexture(FileUtils.getFilePathFromResources("assets/textures/white.png")));
+                texture.setShineDamper(10);
+                texture.setReflectivity(1);
                 TexturedModel texturedModel = new TexturedModel(model, texture);
 
                 Entity entity = new Entity(texturedModel, new Vector3f(0, 0, -25), new Vector3f(0, 0, 0),

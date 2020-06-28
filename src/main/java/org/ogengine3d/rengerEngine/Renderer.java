@@ -9,6 +9,7 @@ import org.ogengine3d.entities.Entity;
 import org.ogengine3d.models.RawModel;
 import org.ogengine3d.models.TexturedModel;
 import org.ogengine3d.shaders.StaticShader;
+import org.ogengine3d.textures.ModelTexture;
 import org.ogengine3d.toolbox.Maths;
 
 public class Renderer {
@@ -56,6 +57,7 @@ public class Renderer {
     public void render(Entity entity, StaticShader shader) {
         TexturedModel texturedModel = entity.getModel();
         RawModel model = texturedModel.getRawModel();
+        ModelTexture texture = texturedModel.getModelTexture();
 
         GL30.glBindVertexArray(model.getVaoID());
         GL20.glEnableVertexAttribArray(0);
@@ -64,6 +66,7 @@ public class Renderer {
         Matrix4f transformationMatrix = Maths.createTransformationMatrix(entity.getPosition(), entity.getRotation(),
                 entity.getScale());
         shader.loadTransformationMatrix(transformationMatrix);
+        shader.loadShineVariables(texture.getShineDamper(), texture.getReflectivity());
         GL13.glActiveTexture(GL13.GL_TEXTURE0);
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, texturedModel.getModelTexture().getTextureID());
         GL11.glDrawElements(GL11.GL_TRIANGLES, model.getVertexCount(), GL11.GL_UNSIGNED_INT, 0);
