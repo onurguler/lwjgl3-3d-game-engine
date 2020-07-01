@@ -8,6 +8,7 @@ import org.ogengine3d.models.RawModel;
 import org.ogengine3d.models.TexturedModel;
 import org.ogengine3d.rengerEngine.DisplayManager;
 import org.ogengine3d.rengerEngine.Loader;
+import org.ogengine3d.rengerEngine.MasterRenderer;
 import org.ogengine3d.rengerEngine.OBJLoader;
 import org.ogengine3d.rengerEngine.Renderer;
 import org.ogengine3d.shaders.StaticShader;
@@ -20,8 +21,6 @@ public class MainGameLoop {
                 displayManager.createDisplay();
 
                 Loader loader = new Loader();
-                StaticShader shader = new StaticShader();
-                Renderer renderer = new Renderer(displayManager, shader);
 
                 RawModel model = OBJLoader.loadObjModel(FileUtils.getFilePathFromResources("assets/models/dragon.obj"),
                                 loader);
@@ -36,21 +35,19 @@ public class MainGameLoop {
 
                 Camera camera = new Camera(displayManager.getInputManager());
 
-                Light light = new Light(new Vector3f(0, 0, -20), new Vector3f(1, 1, 1));
+                Light light = new Light(new Vector3f(3000, 2000, 2000), new Vector3f(1, 1, 1));
+
+                MasterRenderer renderer = new MasterRenderer(displayManager);
 
                 while (!displayManager.isCloseRequested()) {
                         entity.addRotation(new Vector3f(0, 1, 0));
                         camera.move();
-                        renderer.prepare();
-                        shader.start();
-                        shader.loadLight(light);
-                        shader.loadViewMatrix(camera);
-                        renderer.render(entity, shader);
-                        shader.stop();
+                        renderer.processEntity(entity);
+                        renderer.render(light, camera);
                         displayManager.updateDisplay();
                 }
 
-                shader.cleanUp();
+                renderer.cleanUp();
                 loader.cleanUp();
                 displayManager.closeDisplay();
         }
