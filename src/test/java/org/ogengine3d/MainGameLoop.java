@@ -1,5 +1,9 @@
 package org.ogengine3d;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
 import org.joml.Vector3f;
 import org.ogengine3d.entities.Camera;
 import org.ogengine3d.entities.Entity;
@@ -10,8 +14,7 @@ import org.ogengine3d.rengerEngine.DisplayManager;
 import org.ogengine3d.rengerEngine.Loader;
 import org.ogengine3d.rengerEngine.MasterRenderer;
 import org.ogengine3d.rengerEngine.OBJLoader;
-import org.ogengine3d.rengerEngine.Renderer;
-import org.ogengine3d.shaders.StaticShader;
+import org.ogengine3d.terrains.Terrain;
 import org.ogengine3d.textures.ModelTexture;
 import org.ogengine3d.util.FileUtils;
 
@@ -22,27 +25,41 @@ public class MainGameLoop {
 
                 Loader loader = new Loader();
 
-                RawModel model = OBJLoader.loadObjModel(FileUtils.getFilePathFromResources("assets/models/dragon.obj"),
+                RawModel model = OBJLoader.loadObjModel(FileUtils.getFilePathFromResources("assets/models/tree.obj"),
                                 loader);
                 ModelTexture texture = new ModelTexture(
-                                loader.loadTexture(FileUtils.getFilePathFromResources("assets/textures/white.png")));
-                texture.setShineDamper(10);
-                texture.setReflectivity(1);
-                TexturedModel texturedModel = new TexturedModel(model, texture);
+                                loader.loadTexture(FileUtils.getFilePathFromResources("assets/textures/tree.png")));
+                // texture.setShineDamper(10);
+                // texture.setReflectivity(1);
+                TexturedModel staticModel = new TexturedModel(model, texture);
 
-                Entity entity = new Entity(texturedModel, new Vector3f(0, 0, -25), new Vector3f(0, 0, 0),
-                                new Vector3f(1, 1, 1));
+                List<Entity> entities = new ArrayList<Entity>();
+                Random random = new Random();
+                for (int i = 0; i < 500; i++) {
+                        entities.add(new Entity(staticModel,
+                                        new Vector3f(random.nextFloat() * 800 - 400, 0, random.nextFloat() * -600),
+                                        new Vector3f(0, 0, 0), new Vector3f(3, 3, 3)));
+                }
 
                 Camera camera = new Camera(displayManager.getInputManager());
 
-                Light light = new Light(new Vector3f(3000, 2000, 2000), new Vector3f(1, 1, 1));
+                Light light = new Light(new Vector3f(20000, 20000, 2000), new Vector3f(1, 1, 1));
+
+                Terrain terrain = new Terrain(0, -1, loader, new ModelTexture(
+                                loader.loadTexture(FileUtils.getFilePathFromResources("assets/textures/grass.png"))));
+                Terrain terrain2 = new Terrain(-1, -1, loader, new ModelTexture(
+                                loader.loadTexture(FileUtils.getFilePathFromResources("assets/textures/grass.png"))));
 
                 MasterRenderer renderer = new MasterRenderer(displayManager);
 
                 while (!displayManager.isCloseRequested()) {
-                        entity.addRotation(new Vector3f(0, 1, 0));
+
                         camera.move();
-                        renderer.processEntity(entity);
+                        renderer.processTerrain(terrain);
+                        renderer.processTerrain(terrain2);
+                        for (Entity entity : entities) {
+                                renderer.processEntity(entity);
+                        }
                         renderer.render(light, camera);
                         displayManager.updateDisplay();
                 }
