@@ -32,6 +32,18 @@ public class MainGameLoop {
                 // texture.setShineDamper(10);
                 // texture.setReflectivity(1);
                 TexturedModel staticModel = new TexturedModel(model, texture);
+                TexturedModel grass = new TexturedModel(OBJLoader.loadObjModel(
+                                FileUtils.getFilePathFromResources("assets/models/grassModel.obj"), loader),
+                                new ModelTexture(loader.loadTexture(FileUtils
+                                                .getFilePathFromResources("assets/textures/grassTexture.png"))));
+                grass.getModelTexture().setHasTransparency(true);
+                grass.getModelTexture().setUseFakeLighting(true);
+                TexturedModel fern = new TexturedModel(
+                                OBJLoader.loadObjModel(FileUtils.getFilePathFromResources("assets/models/fern.obj"),
+                                                loader),
+                                new ModelTexture(loader.loadTexture(
+                                                FileUtils.getFilePathFromResources("assets/textures/fern.png"))));
+                fern.getModelTexture().setHasTransparency(true);
 
                 List<Entity> entities = new ArrayList<Entity>();
                 Random random = new Random();
@@ -39,6 +51,14 @@ public class MainGameLoop {
                         entities.add(new Entity(staticModel,
                                         new Vector3f(random.nextFloat() * 800 - 400, 0, random.nextFloat() * -600),
                                         new Vector3f(0, 0, 0), new Vector3f(3, 3, 3)));
+
+                        entities.add(new Entity(grass,
+                                        new Vector3f(random.nextFloat() * 800 - 400, 0, random.nextFloat() * -600),
+                                        new Vector3f(0, 0, 0), new Vector3f(1, 1, 1)));
+
+                        entities.add(new Entity(fern,
+                                        new Vector3f(random.nextFloat() * 800 - 400, 0, random.nextFloat() * -600),
+                                        new Vector3f(0, 0, 0), new Vector3f(0.6f, 0.6f, 0.6f)));
                 }
 
                 Camera camera = new Camera(displayManager.getInputManager());
